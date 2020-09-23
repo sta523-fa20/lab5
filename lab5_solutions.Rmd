@@ -1,0 +1,190 @@
+---
+title: "Lab 5 Solutions"
+author: ""
+date: ""
+output: 
+  html_document:
+    toc: true
+    number_sections: false
+    toc_float: true
+    df_print: paged
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      comment = "#>", highlight = TRUE,
+                      fig.align = "center")
+```
+
+## Packages
+
+```{r}
+library(tidyverse)
+```
+
+## Regex basics
+
+In the below parts, identify the pattern to ultimately subset `x` or provide
+a full match corresponding to the specified components of `x`. The only
+code you need to provide is the regular expression to the `pattern` argument
+in `str_detect()` or `str_match()`.
+
+#### Letters
+
+Find a pattern so only the first three components of `x` are subset.
+
+```{r}
+x <- c("abcde", "ab", "abc", "aa")
+x[str_detect(x, pattern = "ab")]
+```
+
+#### Digits: `\d`
+
+Find a pattern so all components of `x` are subset.
+
+```{r}
+x <- c("abc124ewi", "124jtk", "124")
+x[str_detect(x, pattern = "124")]
+```
+
+Find a pattern so all components of `x` are subset.
+
+```{r}
+x <- c("test2", "help3", "4", "a0df")
+x[str_detect(x, pattern = "\\d")]
+```
+
+#### The dot: `.`
+
+Find a pattern so only the components of `x` with a dot are subset.
+
+```{r}
+x <- c(".png", "aei1", "first.last", "%@?.")
+x[str_detect(x, pattern = "\\.")]
+```
+
+Find a pattern so all but the last component of `x` are subset.
+
+```{r}
+x <- c("a", "\\", "b", "4", "$", "\t", "\n")
+x[str_detect(x, pattern = ".")]
+```
+
+#### Classes: `[ ]`
+
+Find a pattern so only the animals are subset.
+
+```{r}
+x <- c("cat", "rat", "bat", "hat")
+x[str_detect(x, pattern = "[^h]at")]
+```
+
+Find a pattern so only the names are subset 
+(those given with upper-case letters).
+
+```{r}
+x <- c("Shawn", "fawn", "Dawn", "pawn", "lawn", "Jon")
+x[str_detect(x, pattern = "[A-Z]")]
+```
+
+#### Repititions: `{ }`, `*`, `+`
+
+Find a pattern so only the incorrect spellings are subset.
+
+```{r}
+x <- c("hello", "helllo", "hellllllo", "helllllllo")
+x[str_detect(x, pattern = "l{3}")]
+```
+
+Find a pattern so the first three components are matched completely. Your
+result should be a 4 x 1 matrix with the value `NA` in row four.
+
+```{r}
+x <- c("aaaabcc", "aabbbbc", "aacc", "a")
+str_match(x, pattern = "aa+b*c*")
+```
+
+#### Optionality: `?`
+
+Find a pattern to completely match the statements that contain numbers. Your
+result should be a 4 x 1 matrix with the value `NA` in row three.
+
+```{r}
+x <- c("1 name available?", "2 names available?", "no names found!",
+       "22 names available?")
+str_match(x, pattern = "\\d\\d? names? available\\?")
+```
+
+#### Anchors: `^` and `$`
+
+Find a pattern to completely match the first statement in `x`. Your
+result should be a 4 x 1 matrix with the value `NA` in rows two through four.
+
+```{r}
+x <- c("My exam was successful", "Unfortunately, My exam was unsuccessful",
+       "My exam was a success", "My exam was successful today")
+str_match(x, pattern = "^M.*successful$")
+```
+
+#### Capture groups: `( )`
+
+Find a pattern to completely match all the dates with the months as a capture
+group. Your result should be a 4 x 2 matrix with the second column being
+only the month abbreviations.
+
+```{r}
+x <- c("Feb 11", "Sep 21", "Nov 2020", "Jun 1995")
+str_match(x, pattern = "([A-Z]\\w{2}) \\d+")
+```
+
+Find a pattern to completely match all the dates with the months as a capture
+group and the years as another capture group. Your result should be a 4 x 3 
+matrix with the second column being only the month abbreviations and the
+third column being the years.
+
+```{r}
+str_match(x, pattern = "([A-Z]\\w{2}) (\\d+)")
+```
+
+Find a pattern to completely match all the dates with the full date as a capture
+group and the years as another capture group. Your result should be a 4 x 3 
+matrix with the second column being the full date and the
+third column being the years.
+
+```{r}
+str_match(x, pattern = "([A-Z]\\w{2} (\\d+))")
+```
+
+## Regex challenges
+
+In the below parts, identify the pattern to ultimately subset `x` or provide
+a full match corresponding to the specified components of `x`. The only
+code you need to provide is the regular expression to the `pattern` argument
+in `str_detect()` or `str_match()`.
+
+Find a pattern so all but the last component are matched completely. Your
+result should have a value of `NA` for the last component.
+
+```{r}
+x <- c("3.14", "100", "-259.11", "2.3e3", "1,112", "720p")
+str_match(x, pattern = "^-?\\d+\\.?,?\\d+(e\\d)?$")[, 1]
+```
+
+Find a pattern so all the image files (`.jpg` and `.png`) are extracted with
+their name and file extensions as capture groups. Your result should be an
+8 x 3 matrix with rows two, three, and six not having `NA` values.
+
+```{r}
+x <- c(".gitignore", "img-01.png", "vis.jpg", ".Rhistory", "lab5.R",
+       "update_vis.jpg", "lab5.html", "png.pdf")
+str_match(x, pattern = "(.*)\\.(jpg|png)$")
+```
+
+Find a pattern to completely match all the phone numbers.
+
+```{r}
+x <- c("423-114-4432", "572-525-2532", "(322)523-1000", "401 342 1983",
+       "3781340100", "1 800 432 1341")
+str_match(x, pattern = "1?\\s?\\(?\\d{3}\\)?[\\s-]?\\d{3}[\\s-]?\\d{4}")
+```
+
